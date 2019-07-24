@@ -58,7 +58,7 @@ export function getNewWallet(randomBytesFunc: (size: number) => Buffer = randomB
 export function getCosmosAddress(publicKey: Buffer): string {
   const message = CryptoJS.enc.Hex.parse(publicKey.toString('hex'))
   const address = CryptoJS.RIPEMD160(CryptoJS.SHA256(message) as any).toString()
-  const cosmosAddress = bech32ify(address, `cosmos`)
+  const cosmosAddress = bech32ify(address, `colors`)
 
   return cosmosAddress
 }

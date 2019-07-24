@@ -1,5 +1,5 @@
 {
-  "name": "@lunie/cosmos-keys",
+  "name": "@rnssolution/color-keys",
   "version": "0.0.10",
   "description": "js version of cosmos wallet signer and address generation",
   "keywords": [
@@ -16,7 +16,7 @@
   "author": "Fabian Weber <fabian@lunie.io>, Billy Rennekamp <billy@tendermint.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/luniehq/cosmos-keys.git"
+    "url": "https://github.com/RNSSolution/cosmos-keys.git"
   },
   "license": "Apache-2.0",
   "engines": {
@@ -122,5 +122,8 @@
     "bip39": "^3.0.1",
     "crypto-js": "^3.1.9-1",
     "secp256k1": "^3.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
