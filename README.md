@@ -7,7 +7,7 @@ This library deals with tasks that are considered *security-critical* and should
 ## Install
 
 ```bash
-yarn add @lunie/cosmos-keys
+yarn add @rnssolution/color-keys
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ yarn add @lunie/cosmos-keys
 ### Create a wallet
 
 ```js
-import { getNewWallet } from "@lunie/cosmos-keys"
+import { getNewWallet } from "@rnssolution/color-keys"
 
 const { cosmosAddress, privateKey, publicKey } = getNewWallet()
 // Attention: protect the `privateKey` at all cost and never display it anywhere!!
@@ -24,7 +24,7 @@ const { cosmosAddress, privateKey, publicKey } = getNewWallet()
 ### Import a seed
 
 ```js
-import { generateWalletFromSeed } from "@lunie/cosmos-keys"
+import { generateWalletFromSeed } from "@rnssolution/color-keys"
 
 const seed = ...24 seed words here
 
@@ -35,7 +35,7 @@ const { cosmosAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
 ### Sign a message
 
 ```js
-import { signWithPrivateKey } from "@lunie/cosmos-keys"
+import { signWithPrivateKey } from "@rnssolution/color-keys"
 
 const privateKey = Buffer.from(...)
 const signMessage = ... message to sign, generate messages with "@lunie/cosmos-js"
@@ -46,7 +46,7 @@ const signature = signWithPrivateKey(signMessage, privateKey)
 ### Using with cosmos-js
 
 ```js
-import { signWithPrivateKey } from "@lunie/cosmos-keys"
+import { signWithPrivateKey } from "@rnssolution/color-keys"
 import Cosmos from "@lunie/cosmos-js"
 
 const privateKey = Buffer.from(...)
@@ -57,7 +57,7 @@ const cosmos = Cosmos(STARGATE_URL, ADDRESS)
 
 // create message
 const msg = cosmos
-  .MsgSend({toAddress: 'cosmos1abcd09876', amounts: [{ denom: 'stake', amount: 10 }})
+  .MsgSend({toAddress: 'color1abcd09876', amounts: [{ denom: 'stake', amount: 10 }})
 
 // create a signer from this local js signer library
 const localSigner = (signMessage) => {
