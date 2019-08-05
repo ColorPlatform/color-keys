@@ -1,6 +1,6 @@
-# Cosmos Keys
+# Color Keys
 
-Cosmos Keys is a library for creating keys and signing messages on Cosmos. You can use it to generate keypairs and addresses and to sign messages for the Cosmos Network. 
+Color Keys is a library for creating keys and signing messages on Color. You can use it to generate keypairs and addresses and to sign messages for the Color Network. 
 
 This library deals with tasks that are considered *security-critical* and should be used very carefully.
 
@@ -17,7 +17,7 @@ yarn add @rnssolution/color-keys
 ```js
 import { getNewWallet } from "@rnssolution/color-keys"
 
-const { cosmosAddress, privateKey, publicKey } = getNewWallet()
+const { ColorAddress, privateKey, publicKey } = getNewWallet()
 // Attention: protect the `privateKey` at all cost and never display it anywhere!!
 ```
 
@@ -28,7 +28,7 @@ import { generateWalletFromSeed } from "@rnssolution/color-keys"
 
 const seed = ...24 seed words here
 
-const { cosmosAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
+const { ColorAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
 // Attention: protect the `privateKey` at all cost and never display it anywhere!!
 ```
 
@@ -38,25 +38,25 @@ const { cosmosAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
 import { signWithPrivateKey } from "@rnssolution/color-keys"
 
 const privateKey = Buffer.from(...)
-const signMessage = ... message to sign, generate messages with "@lunie/cosmos-js"
+const signMessage = ... message to sign, generate messages with "@lunie/Cosmos-js"
 const signature = signWithPrivateKey(signMessage, privateKey)
 
 ```
 
-### Using with cosmos-js
+### Using with Color-js
 
 ```js
 import { signWithPrivateKey } from "@rnssolution/color-keys"
-import Cosmos from "@lunie/cosmos-js"
+import Color from "@lunie/Cosmos-js"
 
 const privateKey = Buffer.from(...)
 const publicKey = Buffer.from(...)
 
-// init cosmos sender
-const cosmos = Cosmos(STARGATE_URL, ADDRESS)
+// init Color sender
+const Color = Color(STARGATE_URL, ADDRESS)
 
 // create message
-const msg = cosmos
+const msg = Color
   .MsgSend({toAddress: 'color1abcd09876', amounts: [{ denom: 'stake', amount: 10 }})
 
 // create a signer from this local js signer library
