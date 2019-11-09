@@ -3,7 +3,7 @@ import * as bip32 from 'bip32'
 import * as bech32 from 'bech32'
 import * as secp256k1 from 'secp256k1'
 import * as CryptoJS from 'crypto-js'
-import { Wallet, StdSignMsg, KeyPair } from './types';
+import { Wallet, StdSignMsg,StdSignandverifyMsg, KeyPair } from './types';
 
 const hdPathAtom = `m/44'/118'/0'/0/0` // key controlling ATOM allocation
 
@@ -98,6 +98,25 @@ export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey:
 
   return signature
 }
+// produces the signature for a message (returns Buffer)
+export function signWithPrivateKeywallet(signMessage: StdSignandverifyMsg | string, privateKey: Buffer): Buffer {
+  const signMessageString: string =
+    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
+  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
+  const { signature } = secp256k1.sign(signHash, privateKey)
+
+  return signature
+}
+
+//Verify
+export function verifySignature(signMessage: StdSignandverifyMsg | string, signature: Buffer, publicKey: Buffer): boolean {
+  const signMessageString: string =
+    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
+  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
+
+  return secp256k1.verify(signHash, signature, publicKey)
+}
+
 
 function windowRandomBytes(size: number, window: Window) {
   const chunkSize = size / 4

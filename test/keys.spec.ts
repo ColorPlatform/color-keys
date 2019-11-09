@@ -4,7 +4,9 @@ import {
   getNewWalletFromSeed,
   getSeed,
   getNewWallet,
-  signWithPrivateKey
+  signWithPrivateKey,
+  signWithPrivateKeywallet,
+  verifySignature
 } from '../src/cosmos-keys'
 
 describe(`Key Generation`, () => {
@@ -30,7 +32,7 @@ describe(`Key Generation`, () => {
 
   it(`should create a wallet from a seed`, async () => {
     expect(await getNewWalletFromSeed(`a b c`)).toEqual({
-      cosmosAddress: `cosmos1pt9904aqg739q6p9kgc2v0puqvj6atp0zsj70g`,
+      cosmosAddress: `colors1pt9904aqg739q6p9kgc2v0puqvj6atp0zueard`,
       privateKey: `a9f1c24315bf0e366660a26c5819b69f242b5d7a293fc5a3dec8341372544be8`,
       publicKey: `037a525043e79a9051d58214a9a2a70b657b3d49124dcd0acc4730df5f35d74b32`
     })
@@ -62,7 +64,7 @@ describe(`Key Generation`, () => {
         )
       )
     ).toEqual({
-      cosmosAddress: `cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mhl`,
+      cosmosAddress: `colors1r5v5srda7xfth3hn2s26txvrcrntldjum8vcm6`,
       privateKey: `8088c2ed2149c34f6d6533b774da4e1692eb5cb426fdbaef6898eeda489630b7`,
       publicKey: `02ba66a84cf7839af172a13e7fc9f5e7008cb8bca1585f8f3bafb3039eda3c1fdd`
     })
@@ -87,11 +89,11 @@ describe(`Address generation`, () => {
     const vectors = [
       {
         pubkey: `52FDFC072182654F163F5F0F9A621D729566C74D10037C4D7BBB0407D1E2C64981`,
-        address: `cosmos1v3z3242hq7xrms35gu722v4nt8uux8nvug5gye`
+        address: `colors1v3z3242hq7xrms35gu722v4nt8uux8nvuyltgu`
       },
       {
         pubkey: `855AD8681D0D86D1E91E00167939CB6694D2C422ACD208A0072939487F6999EB9D`,
-        address: `cosmos1hrtz7umxfyzun8v2xcas0v45hj2uhp6sgdpac8`
+        address: `colors1hrtz7umxfyzun8v2xcas0v45hj2uhp6sgp275z`
       }
     ]
     vectors.forEach(({ pubkey, address }) => {
@@ -116,13 +118,13 @@ describe(`Signing`, () => {
               value: {
                 inputs: [
                   {
-                    address: 'cosmos1qperwt9wrnkg5k9e5gzfgjppzpqhyav5j24d66',
+                    address: 'colors1qperwt9wrnkg5k9e5gzfgjppzpqhyav5j24d66',
                     coins: [{ amount: '1', denom: 'STAKE' }]
                   }
                 ],
                 outputs: [
                   {
-                    address: 'cosmos1yeckxz7tapz34kjwnjxvmxzurerquhtrmxmuxt',
+                    address: 'colors1yeckxz7tapz34kjwnjxvmxzurerquhtrmxmuxt',
                     coins: [{ amount: '1', denom: 'STAKE' }]
                   }
                 ]
@@ -131,7 +133,7 @@ describe(`Signing`, () => {
           ],
           sequence: '0'
         },
-        signature: `YjJhlAf7aCnUtLyBNDp9e6LKuNgV7hJC3rmm0Wro5nBsIPVtWzjuobsp/AhR5Kht+HcRF2zBq4AfoNQMIbY6fw==`
+        signature: `tggLNPtSdGtzWjgcy4nATojEhhwxZUovd3kGhjqBLFYwIcczxDWXaGzlQlgsHEzGGDjEqd4TX4duHRe66/M0uQ==`
       }
     ]
 
@@ -139,5 +141,51 @@ describe(`Signing`, () => {
       const signature = signWithPrivateKey(signMessage, Buffer.from(privateKey, 'hex'))
       expect(signature.toString('base64')).toEqual(expectedSignature)
     })
+  })
+})
+
+
+describe(`Signing`, () => {
+  it(`should create a correct signature according to wallet`, () => {
+    const vectors = [
+      {
+        privateKey: `2afc5a66b30e7521d553ec8e6f7244f906df97477248c30c103d7b3f2c671fef`,
+        signMessage: {
+          message: 'abc'
+        },
+        signature: `Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`
+      }
+    ]
+
+    vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
+      const signature = signWithPrivateKeywallet(signMessage, Buffer.from(privateKey, 'hex'))
+      expect(signature.toString('base64')).toEqual(expectedSignature)
+    })
+  })
+})
+
+describe(`Verifying`, () => {
+  it(`should verify a signature`, () => {
+    const vectors = [
+      {
+        publicKey: `03ab1ebbb21aee35154e36aaebc25067177f783f7e967c9d6493e8920c05e40eb5`,
+        signMessage: {
+          message: 'abc'
+        },
+        signature: `Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`
+      }
+    ]
+
+    vectors.forEach(({ publicKey, signMessage, signature }) => {
+      const publicKeyBuffer = Buffer.from(publicKey, 'hex');
+      const signatureBuffer = Buffer.from(signature, 'base64');
+      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(true);
+    })
+  })
+
+  it(`should fail on invalid signature`, () => {
+    const publicKey = Buffer.from(`03ab1ebbb21aee35154e36aaebc25067177f783f7e967c9d6493e8920c05e40eb5`, 'hex');
+    const signature = Buffer.from(`Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`, 'base64');
+    expect(verifySignature('abcdefg', signature, publicKey)).toEqual(false);
   })
 })

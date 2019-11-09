@@ -28,3 +28,6 @@ export interface StdSignMsg {
   msgs: any[]
   memo: string
 }
+export interface StdSignandverifyMsg {
+  message: string
+}
