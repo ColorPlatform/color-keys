@@ -1,6 +1,6 @@
 {
   "name": "@rnssolution/color-keys",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "js version of cosmos wallet signer and address generation",
   "keywords": [
     "cosmos",
