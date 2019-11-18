@@ -90,7 +90,7 @@ describe(`Address generation`, () => {
       {
         pubkey: `52FDFC072182654F163F5F0F9A621D729566C74D10037C4D7BBB0407D1E2C64981`,
         address: `colors1v3z3242hq7xrms35gu722v4nt8uux8nvuyltgu`
-      },
+      },          
       {
         pubkey: `855AD8681D0D86D1E91E00167939CB6694D2C422ACD208A0072939487F6999EB9D`,
         address: `colors1hrtz7umxfyzun8v2xcas0v45hj2uhp6sgp275z`
@@ -149,11 +149,11 @@ describe(`Signing`, () => {
   it(`should create a correct signature according to wallet`, () => {
     const vectors = [
       {
-        privateKey: `2afc5a66b30e7521d553ec8e6f7244f906df97477248c30c103d7b3f2c671fef`,
+        privateKey: `72cec60ccec2c595fb0d15058425e6d097eb0066caa39b12e5c85c56a619d37d`,
         signMessage: {
-          message: 'abc'
+          message: 'Sahib'
         },
-        signature: `Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
       }
     ]
 
@@ -168,24 +168,26 @@ describe(`Verifying`, () => {
   it(`should verify a signature`, () => {
     const vectors = [
       {
-        publicKey: `03ab1ebbb21aee35154e36aaebc25067177f783f7e967c9d6493e8920c05e40eb5`,
+        publicKey: `colors1asfu5pm88x5j9y2adwx998k8l5vpnsk0cdvfx`,
         signMessage: {
-          message: 'abc'
+          message: 'Sahib'
         },
-        signature: `Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
       }
     ]
 
     vectors.forEach(({ publicKey, signMessage, signature }) => {
-      const publicKeyBuffer = Buffer.from(publicKey, 'hex');
+      const publicKeyBuffer = Buffer.from(publicKey, 'base64');
       const signatureBuffer = Buffer.from(signature, 'base64');
       expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(true);
     })
   })
 
   it(`should fail on invalid signature`, () => {
-    const publicKey = Buffer.from(`03ab1ebbb21aee35154e36aaebc25067177f783f7e967c9d6493e8920c05e40eb5`, 'hex');
-    const signature = Buffer.from(`Q3n/MHheuhWjIUbDozTLLN3U/kjMCfOJt8evgEHvsW4NT1vxKxQ6y3R3HTcDgfGo7WjiDjJOSpspEv/09XDWWg==`, 'base64');
-    expect(verifySignature('abcdefg', signature, publicKey)).toEqual(false);
+    const publicKey = `colors1asfu5pm88x5j9y2adwx998k8l5vpnsk0cdvfx`
+    const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
+    const publicKeyBuffer = Buffer.from(publicKey, 'base64');
+      const signatureBuffer = Buffer.from(signature, 'base64');
+    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(false);
   })
 })

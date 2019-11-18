@@ -3,13 +3,15 @@ import * as bip32 from 'bip32'
 import * as bech32 from 'bech32'
 import * as secp256k1 from 'secp256k1'
 import * as CryptoJS from 'crypto-js'
+import * as util from 'util'
 import { Wallet, StdSignMsg,StdSignandverifyMsg, KeyPair } from './types';
+import { decode } from 'punycode'
 
 const hdPathAtom = `m/44'/118'/0'/0/0` // key controlling ATOM allocation
 
 /* tslint:disable-next-line:strict-type-predicates */
 const windowObject: Window | null = typeof window === 'undefined' ? null : window
-
+const createHash = require('create-hash')
 // returns a byte buffer of the size specified
 export function randomBytes(size: number, window = windowObject): Buffer {
   // in browsers
@@ -59,7 +61,6 @@ export function getCosmosAddress(publicKey: Buffer): string {
   const message = CryptoJS.enc.Hex.parse(publicKey.toString('hex'))
   const address = CryptoJS.RIPEMD160(CryptoJS.SHA256(message) as any).toString()
   const cosmosAddress = bech32ify(address, `colors`)
-
   return cosmosAddress
 }
 
@@ -88,7 +89,6 @@ function bech32ify(address: string, prefix: string) {
   const words = bech32.toWords(Buffer.from(address, 'hex'))
   return bech32.encode(prefix, words)
 }
-
 // produces the signature for a message (returns Buffer)
 export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey: Buffer): Buffer {
   const signMessageString: string =
@@ -101,9 +101,11 @@ export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey:
 // produces the signature for a message (returns Buffer)
 export function signWithPrivateKeywallet(signMessage: StdSignandverifyMsg | string, privateKey: Buffer): Buffer {
   const signMessageString: string =
-    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
+    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
   const { signature } = secp256k1.sign(signHash, privateKey)
+  
+   var sigObj = secp256k1.sign(signHash, privateKey)
 
   return signature
 }
@@ -111,10 +113,15 @@ export function signWithPrivateKeywallet(signMessage: StdSignandverifyMsg | stri
 //Verify
 export function verifySignature(signMessage: StdSignandverifyMsg | string, signature: Buffer, publicKey: Buffer): boolean {
   const signMessageString: string =
-    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
+    typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-
-  return secp256k1.verify(signHash, signature, publicKey)
+  const hash =  magicHash(signMessageString,'colors')
+  var extractedpublicKey = secp256k1.recover(signHash, signature, 1, true)
+  const extractedcoloraddress = Buffer.from(getCosmosAddress(extractedpublicKey), 'base64')
+  if (Buffer.compare(publicKey,extractedcoloraddress) != 0){
+    return false
+  }
+  return secp256k1.verify(signHash, signature,extractedpublicKey)
 }
 
 
@@ -133,4 +140,54 @@ function windowRandomBytes(size: number, window: Window) {
     hexString += chunk // join
   }
   return Buffer.from(hexString, 'hex')
+}
+
+function convert (data:any, inBits:any, outBits:any, pad:any) {
+  var value = 0
+  var bits = 0
+  var maxV = (1 << outBits) - 1
+
+  var result = []
+  for (var i = 0; i < data.length; ++i) {
+    value = (value << inBits) | data[i]
+    bits += inBits
+
+    while (bits >= outBits) {
+      bits -= outBits
+      result.push((value >> bits) & maxV)
+    }
+  }
+
+  if (pad) {
+    if (bits > 0) {
+      result.push((value << (outBits - bits)) & maxV)
+    }
+  } else {
+    if (bits >= inBits) throw new Error('Excess padding')
+    if ((value << (outBits - bits)) & maxV) throw new Error('Non-zero padding')
+  }
+
+  return result
+}
+
+function magicHash (message:any, messagePrefix:any) {
+  const varuint = require('varuint-bitcoin')
+  messagePrefix = messagePrefix || '\u0018Bitcoin Signed Message:\n'
+  if (!Buffer.isBuffer(messagePrefix)) {
+    messagePrefix = Buffer.from(messagePrefix, 'utf8')
+  }
+
+  const messageVISize = varuint.encodingLength(message.length)
+  const buffer = Buffer.allocUnsafe(
+    messagePrefix.length + messageVISize + message.length
+  )
+  messagePrefix.copy(buffer, 0)
+  varuint.encode(message.length, buffer, messagePrefix.length)
+  buffer.write(message, messagePrefix.length + messageVISize)
+  const buffermessage = CryptoJS.enc.Hex.parse(buffer.toString('hex'))
+  return hash256(buffermessage)
+}
+
+function hash256 (buffer:any) {
+  return CryptoJS.SHA256(buffer)
 }
