@@ -103,25 +103,30 @@ export function signWithPrivateKeywallet(signMessage: StdSignandverifyMsg | stri
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const { signature } = secp256k1.sign(signHash, privateKey)
-  
-   var sigObj = secp256k1.sign(signHash, privateKey)
-
-  return signature
+  const { signature,recovery } = secp256k1.sign(signHash, privateKey)
+  var len = signature.length
+  const signatureconcatenated = Buffer.concat([signature, Buffer.from(recovery.toString())])
+  return signatureconcatenated
 }
 
 //Verify
 export function verifySignature(signMessage: StdSignandverifyMsg | string, signature: Buffer, publicKey: Buffer): boolean {
+  var recoverBit = 0
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
   const hash =  magicHash(signMessageString,'colors')
-  var extractedpublicKey = secp256k1.recover(signHash, signature, 1, true)
+  var sig = signature.slice(0,signature.length-1)
+  var chk = signature.slice(signature.length-1,signature.length)
+  if(parseInt(chk.toString()) >= 0){
+    recoverBit = parseInt(chk.toString())
+  }
+  var extractedpublicKey = secp256k1.recover(signHash, sig, recoverBit, true)
   const extractedcoloraddress = Buffer.from(getCosmosAddress(extractedpublicKey), 'base64')
   if (Buffer.compare(publicKey,extractedcoloraddress) != 0){
     return false
   }
-  return secp256k1.verify(signHash, signature,extractedpublicKey)
+  return secp256k1.verify(signHash, sig,extractedpublicKey)
 }
 
 

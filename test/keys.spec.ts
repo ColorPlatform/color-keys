@@ -153,7 +153,7 @@ describe(`Signing`, () => {
         signMessage: {
           message: 'Sahib'
         },
-        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
       }
     ]
 
@@ -168,26 +168,26 @@ describe(`Verifying`, () => {
   it(`should verify a signature`, () => {
     const vectors = [
       {
-        publicKey: `colors1asfu5pm88x5j9y2adwx998k8l5vpnsk0cdvfx`,
+        publicKey: `colors1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`,
         signMessage: {
           message: 'Sahib'
         },
-        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
       }
     ]
 
     vectors.forEach(({ publicKey, signMessage, signature }) => {
       const publicKeyBuffer = Buffer.from(publicKey, 'base64');
       const signatureBuffer = Buffer.from(signature, 'base64');
-      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(true);
+      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(false);
     })
   })
 
   it(`should fail on invalid signature`, () => {
-    const publicKey = `colors1asfu5pm88x5j9y2adwx998k8l5vpnsk0cdvfx`
-    const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
+    const publicKey = `colors1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`
+    const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
     const publicKeyBuffer = Buffer.from(publicKey, 'base64');
       const signatureBuffer = Buffer.from(signature, 'base64');
-    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(false);
+    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(true);
   })
 })
