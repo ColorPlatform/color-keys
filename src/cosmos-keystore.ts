@@ -149,8 +149,9 @@ function encrypt(message: string, password: string): string {
 function decrypt(transitMessage: string, password: string): string {
   const salt = CryptoJS.enc.Hex.parse(transitMessage.substr(0, 32))
   const iv = CryptoJS.enc.Hex.parse(transitMessage.substr(32, 32))
-  const hmac = transitMessage.substr((576+64))
-  const encrypted = transitMessage.substring(64,(576+64))
+  const length = transitMessage.length
+  const hmac = transitMessage.substr((length-64))
+  const encrypted = transitMessage.substring(64,(length-64))
   const key = CryptoJS.PBKDF2(password, salt, {
     keySize: keySize / 32,
     iterations: iterations
