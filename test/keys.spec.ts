@@ -106,40 +106,27 @@ describe(`Signing`, () => {
   it(`should create a correct signature`, () => {
     const vectors = [
       {
-        privateKey: `2afc5a66b30e7521d553ec8e6f7244f906df97477248c30c103d7b3f2c671fef`,
+        privateKey: `59d7c57402794265d5b667fa3b2f51f28d45433cc06e142151835dcf2544e8c8`,
         signMessage: {
-          account_number: '1',
-          chain_id: 'tendermint_test',
-          fee: { amount: [{ amount: '0', denom: '' }], gas: '21906' },
-          memo: '',
-          msgs: [
-            {
-              type: 'cosmos-sdk/Send',
-              value: {
-                inputs: [
-                  {
-                    address: 'colors1qperwt9wrnkg5k9e5gzfgjppzpqhyav5j24d66',
-                    coins: [{ amount: '1', denom: 'STAKE' }]
-                  }
-                ],
-                outputs: [
-                  {
-                    address: 'colors1yeckxz7tapz34kjwnjxvmxzurerquhtrmxmuxt',
-                    coins: [{ amount: '1', denom: 'STAKE' }]
-                  }
-                ]
-              }
-            }
-          ],
-          sequence: '0'
+          account_number:"14",
+          chain_id:"colors-test-01",
+          fee:{amount:[{amount:"37",denom:"uclr"}],
+          gas:"36977"},
+          memo:"(Sent via Color Wallet)",
+          msgs:[{type:"cosmos-sdk/MsgSend",value:{amount:[{amount:"1200000000",
+          denom:"uclr"}],
+          from_address:"colors1hvmd336k0wsq3hwmf2vaf7008zc8t92p0uscrj",
+          to_address:"colors1hvmd336k0wsq3hwmf2vaf7008zc8t92p0uscrj"}}],
+          sequence:"0"
         },
-        signature: `tggLNPtSdGtzWjgcy4nATojEhhwxZUovd3kGhjqBLFYwIcczxDWXaGzlQlgsHEzGGDjEqd4TX4duHRe66/M0uQ==`
+        signature: `f9b6faac50d368c848a07a979bfac5d2f2634b2b7423de71d8009409f89408017e087d775ddc898ddf5cfc34c72dcf63925cd8ab0e375bdd765d3f372ba995d1`
       }
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
       const signature = signWithPrivateKey(signMessage, Buffer.from(privateKey, 'hex'))
-      expect(signature.toString('base64')).toEqual(expectedSignature)
+      console.log("Signature:",signature.toString('hex'))
+      expect(signature.toString('hex')).toEqual(expectedSignature)
     })
   })
 })

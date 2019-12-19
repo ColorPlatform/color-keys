@@ -138,27 +138,34 @@ function encrypt(message: string, password: string): string {
     padding: CryptoJS.pad.Pkcs7,
     mode: CryptoJS.mode.CBC
   })
-
+  
   // salt, iv will be hex 32 in length
   // append them to the ciphertext for use  in decryption
-  const transitmessage = salt.toString() + iv.toString() + encrypted.toString()
-  return transitmessage
+  const transitmessage = salt.toString() + iv.toString() + encrypted.toString() //+ hmacEncrypted.toString()
+  const hmacEncrypted = CryptoJS.HmacSHA256((salt.toString() + iv.toString() + encrypted.toString()),key)
+  return (transitmessage +hmacEncrypted.toString())
 }
 
 function decrypt(transitMessage: string, password: string): string {
   const salt = CryptoJS.enc.Hex.parse(transitMessage.substr(0, 32))
   const iv = CryptoJS.enc.Hex.parse(transitMessage.substr(32, 32))
-  const encrypted = transitMessage.substring(64)
-
+  const hmac = transitMessage.substr((576+64))
+  const encrypted = transitMessage.substring(64,(576+64))
   const key = CryptoJS.PBKDF2(password, salt, {
     keySize: keySize / 32,
     iterations: iterations
   })
-
+  
+  const hmacDecrypted = CryptoJS.HmacSHA256((salt.toString()+iv.toString()+encrypted.toString()),key)
+  if(hmac.toString() !== hmacDecrypted.toString()){
+    throw new Error("Failed MAC check!")
+  }
   const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
     iv: iv,
     padding: CryptoJS.pad.Pkcs7,
     mode: CryptoJS.mode.CBC
   }).toString(CryptoJS.enc.Utf8)
+ 
+ 
   return decrypted
 }
