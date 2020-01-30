@@ -1,5 +1,5 @@
 {
-  "name": "@rnssolution/color-keys",
+  "name": "@colorplatform/color-keys",
   "version": "2.0.3",
   "description": "js version of color wallet signer and address generation",
   "keywords": [
@@ -16,7 +16,7 @@
   "author": "Saad Rasool <saad@rnssol.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RNSSolution/color-keys.git"
+    "url": "https://github.com/colorplatform/color-keys.git"
   },
   "license": "Apache-2.0",
   "engines": {

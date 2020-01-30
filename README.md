@@ -7,7 +7,7 @@ This library deals with tasks that are considered *security-critical* and should
 ## Install
 
 ```bash
-yarn add @rnssolution/color-keys
+yarn add @colorplatform/color-keys
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ yarn add @rnssolution/color-keys
 ### Create a wallet
 
 ```js
-import { getNewWallet } from "@rnssolution/color-keys"
+import { getNewWallet } from "@colorplatform/color-keys"
 
 const { ColorAddress, privateKey, publicKey } = getNewWallet()
 // Attention: protect the `privateKey` at all cost and never display it anywhere!!
@@ -24,7 +24,7 @@ const { ColorAddress, privateKey, publicKey } = getNewWallet()
 ### Import a seed
 
 ```js
-import { generateWalletFromSeed } from "@rnssolution/color-keys"
+import { generateWalletFromSeed } from "@colorplatform/color-keys"
 
 const seed = ...24 seed words here
 
@@ -35,7 +35,7 @@ const { ColorAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
 ### Sign a message
 
 ```js
-import { signWithPrivateKey } from "@rnssolution/color-keys"
+import { signWithPrivateKey } from "@colorplatform/color-keys"
 
 const privateKey = Buffer.from(...)
 const signMessage = ... message to sign, generate messages with "@lunie/Cosmos-js"
@@ -46,7 +46,7 @@ const signature = signWithPrivateKey(signMessage, privateKey)
 ### Using with Color-js
 
 ```js
-import { signWithPrivateKey } from "@rnssolution/color-keys"
+import { signWithPrivateKey } from "@colorplatform/color-keys"
 import Color from "@lunie/Cosmos-js"
 
 const privateKey = Buffer.from(...)
