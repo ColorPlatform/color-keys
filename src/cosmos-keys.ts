@@ -7,7 +7,7 @@ import * as util from 'util'
 import { Wallet, StdSignMsg,StdSignandverifyMsg, KeyPair } from './types';
 import { decode } from 'punycode'
 
-const hdPathAtom = `m/44'/118'/0'/0/0` // key controlling ATOM allocation
+const hdPathAtom = `m/44'/477'/0'/0/0` // key controlling ATOM allocation
 
 /* tslint:disable-next-line:strict-type-predicates */
 const windowObject: Window | null = typeof window === 'undefined' ? null : window
