@@ -32,13 +32,13 @@ describe(`Key Generation`, () => {
 
   it(`should create a wallet from a seed`, async () => {
     expect(await getNewWalletFromSeed(`a b c`)).toEqual({
-      cosmosAddress: `colors1pt9904aqg739q6p9kgc2v0puqvj6atp0zueard`,
-      privateKey: `a9f1c24315bf0e366660a26c5819b69f242b5d7a293fc5a3dec8341372544be8`,
-      publicKey: `037a525043e79a9051d58214a9a2a70b657b3d49124dcd0acc4730df5f35d74b32`
+      cosmosAddress: `color1ptw30xjwsn853fn4pnj58a735vq5wxaud4yulw`,
+      privateKey: `24d599b1059c86df954e02343bd07e6d0af9cab9511ab71204425b17e330328c`,
+      publicKey: `03d55522b27b3cba6d8b6ffa1218b501ce15ac84cd7ad6dec55fb151166be4bce8`
     })
   })
 
-  it(`create a seed`, () => {
+  it(`create a zero seed`, () => {
     expect(
       getSeed(() =>
         Buffer.from(
@@ -53,6 +53,21 @@ describe(`Key Generation`, () => {
     )
   })
 
+  it(`create a seed`, () => {
+    // BIP39 test vector (https://github.com/trezor/python-mnemonic/blob/master/vectors.json)
+    var entropy = "f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f"
+    expect(
+      getSeed(() =>
+        Buffer.from(
+          entropy,
+          'hex'
+        )
+      )
+    ).toBe(
+      `void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold`
+    )
+  })
+
   it(`create a random wallet`, () => {
     expect(
       getNewWallet(() =>
@@ -64,9 +79,9 @@ describe(`Key Generation`, () => {
         )
       )
     ).toEqual({
-      cosmosAddress: `colors1r5v5srda7xfth3hn2s26txvrcrntldjum8vcm6`,
-      privateKey: `8088c2ed2149c34f6d6533b774da4e1692eb5cb426fdbaef6898eeda489630b7`,
-      publicKey: `02ba66a84cf7839af172a13e7fc9f5e7008cb8bca1585f8f3bafb3039eda3c1fdd`
+      cosmosAddress: `color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt`,
+      privateKey: `f9d76cd16ab9473e48247ec1405075c338ec174543566d58ce4f6c750810606f`,
+      publicKey: `02da84e1accf7f6d5260d6f33fca3085d031485f2a5e87efb584e4831e8acaeee9`
     })
   })
 
@@ -85,15 +100,15 @@ describe(`Key Generation`, () => {
 })
 
 describe(`Address generation`, () => {
-  it(`should create correct cosmos addresses`, () => {
+  it(`should create correct addresses`, () => {
     const vectors = [
       {
-        pubkey: `52FDFC072182654F163F5F0F9A621D729566C74D10037C4D7BBB0407D1E2C64981`,
-        address: `colors1v3z3242hq7xrms35gu722v4nt8uux8nvuyltgu`
+        pubkey: `02da84e1accf7f6d5260d6f33fca3085d031485f2a5e87efb584e4831e8acaeee9`,
+        address: `color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt`
       },          
       {
-        pubkey: `855AD8681D0D86D1E91E00167939CB6694D2C422ACD208A0072939487F6999EB9D`,
-        address: `colors1hrtz7umxfyzun8v2xcas0v45hj2uhp6sgp275z`
+        pubkey: `02c8f1d2e9713fe128e40ac4abf4bae1f5bee943b9200dabf6c20a1a155ef8ba1b`,
+        address: `color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval`
       }
     ]
     vectors.forEach(({ pubkey, address }) => {
@@ -106,20 +121,26 @@ describe(`Signing`, () => {
   it(`should create a correct signature`, () => {
     const vectors = [
       {
-        privateKey: `59d7c57402794265d5b667fa3b2f51f28d45433cc06e142151835dcf2544e8c8`,
+        // mnemonic: measure slogan connect luggage stereo federal stuff stomach stumble security end differ
+        // private key: ea880bbef6bc3dd378b2b43a2b00ad75fbe721556970e73c4b3d02d65ef9ba33
+        // public key: 02c8f1d2e9713fe128e40ac4abf4bae1f5bee943b9200dabf6c20a1a155ef8ba1b
+        // address: color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval
+        privateKey: `ea880bbef6bc3dd378b2b43a2b00ad75fbe721556970e73c4b3d02d65ef9ba33`,
         signMessage: {
           account_number:"14",
           chain_id:"colors-test-01",
           fee:{amount:[{amount:"37",denom:"uclr"}],
           gas:"36977"},
           memo:"(Sent via Color Wallet)",
-          msgs:[{type:"cosmos-sdk/MsgSend",value:{amount:[{amount:"1200000000",
+          msgs:[{type:"color/MsgSend",value:{amount:[{amount:"1200000000",
           denom:"uclr"}],
-          from_address:"colors1hvmd336k0wsq3hwmf2vaf7008zc8t92p0uscrj",
-          to_address:"colors1hvmd336k0wsq3hwmf2vaf7008zc8t92p0uscrj"}}],
+          from_address:"color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval",
+          // This address is for mnemonic: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art
+          // In other words, entropy is bytes([0x00] * 32) -- 32 zero
+          to_address:"color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt"}}],
           sequence:"0"
         },
-        signature: `f9b6faac50d368c848a07a979bfac5d2f2634b2b7423de71d8009409f89408017e087d775ddc898ddf5cfc34c72dcf63925cd8ab0e375bdd765d3f372ba995d1`
+        signature: `6e670d8703c1e82f73853ac9412705a3d73139ffd292ae6ba2c229fe28f5d8a420ff8c628f867cfc7ccb81b3f5c0fa4a2451246dba0daaa457d2c5b5c79b896a`
       }
     ]
 
@@ -155,7 +176,7 @@ describe(`Verifying`, () => {
   it(`should verify a signature`, () => {
     const vectors = [
       {
-        publicKey: `colors1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`,
+        publicKey: `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`,
         signMessage: {
           message: 'Sahib'
         },
@@ -171,7 +192,7 @@ describe(`Verifying`, () => {
   })
 
   it(`should fail on invalid signature`, () => {
-    const publicKey = `colors1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`
+    const publicKey = `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`
     const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
     const publicKeyBuffer = Buffer.from(publicKey, 'base64');
       const signatureBuffer = Buffer.from(signature, 'base64');
