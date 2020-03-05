@@ -55,15 +55,8 @@ describe(`Key Generation`, () => {
 
   it(`create a seed`, () => {
     // BIP39 test vector (https://github.com/trezor/python-mnemonic/blob/master/vectors.json)
-    var entropy = "f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f"
-    expect(
-      getSeed(() =>
-        Buffer.from(
-          entropy,
-          'hex'
-        )
-      )
-    ).toBe(
+    var entropy = 'f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f'
+    expect(getSeed(() => Buffer.from(entropy, 'hex'))).toBe(
       `void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold`
     )
   })
@@ -105,7 +98,7 @@ describe(`Address generation`, () => {
       {
         pubkey: `02da84e1accf7f6d5260d6f33fca3085d031485f2a5e87efb584e4831e8acaeee9`,
         address: `color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt`
-      },          
+      },
       {
         pubkey: `02c8f1d2e9713fe128e40ac4abf4bae1f5bee943b9200dabf6c20a1a155ef8ba1b`,
         address: `color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval`
@@ -127,18 +120,23 @@ describe(`Signing`, () => {
         // address: color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval
         privateKey: `ea880bbef6bc3dd378b2b43a2b00ad75fbe721556970e73c4b3d02d65ef9ba33`,
         signMessage: {
-          account_number:"14",
-          chain_id:"colors-test-01",
-          fee:{amount:[{amount:"37",denom:"uclr"}],
-          gas:"36977"},
-          memo:"(Sent via Color Wallet)",
-          msgs:[{type:"color/MsgSend",value:{amount:[{amount:"1200000000",
-          denom:"uclr"}],
-          from_address:"color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval",
-          // This address is for mnemonic: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art
-          // In other words, entropy is bytes([0x00] * 32) -- 32 zero
-          to_address:"color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt"}}],
-          sequence:"0"
+          account_number: '14',
+          chain_id: 'colors-test-01',
+          fee: { amount: [{ amount: '37', denom: 'uclr' }], gas: '36977' },
+          memo: '(Sent via Color Wallet)',
+          msgs: [
+            {
+              type: 'color/MsgSend',
+              value: {
+                amount: [{ amount: '1200000000', denom: 'uclr' }],
+                from_address: 'color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval',
+                // This address is for mnemonic: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art
+                // In other words, entropy is bytes([0x00] * 32) -- 32 zero
+                to_address: 'color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt'
+              }
+            }
+          ],
+          sequence: '0'
         },
         signature: `6e670d8703c1e82f73853ac9412705a3d73139ffd292ae6ba2c229fe28f5d8a420ff8c628f867cfc7ccb81b3f5c0fa4a2451246dba0daaa457d2c5b5c79b896a`
       }
@@ -146,12 +144,11 @@ describe(`Signing`, () => {
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
       const signature = signWithPrivateKey(signMessage, Buffer.from(privateKey, 'hex'))
-      console.log("Signature:",signature.toString('hex'))
+      console.log('Signature:', signature.toString('hex'))
       expect(signature.toString('hex')).toEqual(expectedSignature)
     })
   })
 })
-
 
 describe(`Signing`, () => {
   it(`should create a correct signature according to wallet`, () => {
@@ -185,17 +182,17 @@ describe(`Verifying`, () => {
     ]
 
     vectors.forEach(({ publicKey, signMessage, signature }) => {
-      const publicKeyBuffer = Buffer.from(publicKey, 'base64');
-      const signatureBuffer = Buffer.from(signature, 'base64');
-      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(false);
+      const publicKeyBuffer = Buffer.from(publicKey, 'base64')
+      const signatureBuffer = Buffer.from(signature, 'base64')
+      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(false)
     })
   })
 
   it(`should fail on invalid signature`, () => {
     const publicKey = `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`
     const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
-    const publicKeyBuffer = Buffer.from(publicKey, 'base64');
-      const signatureBuffer = Buffer.from(signature, 'base64');
-    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(true);
+    const publicKeyBuffer = Buffer.from(publicKey, 'base64')
+    const signatureBuffer = Buffer.from(signature, 'base64')
+    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(true)
   })
 })

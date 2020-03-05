@@ -4,7 +4,7 @@ import * as bech32 from 'bech32'
 import * as secp256k1 from 'secp256k1'
 import * as CryptoJS from 'crypto-js'
 import * as util from 'util'
-import { Wallet, StdSignMsg,StdSignandverifyMsg, KeyPair } from './types';
+import { Wallet, StdSignMsg, StdSignandverifyMsg, KeyPair } from './types'
 import { decode } from 'punycode'
 
 const hdPathAtom = `m/44'/477'/0'/0/0` // key controlling ATOM allocation
@@ -99,36 +99,42 @@ export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey:
   return signature
 }
 // produces the signature for a message (returns Buffer)
-export function signWithPrivateKeywallet(signMessage: StdSignandverifyMsg | string, privateKey: Buffer): Buffer {
+export function signWithPrivateKeywallet(
+  signMessage: StdSignandverifyMsg | string,
+  privateKey: Buffer
+): Buffer {
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const { signature,recovery } = secp256k1.sign(signHash, privateKey)
+  const { signature, recovery } = secp256k1.sign(signHash, privateKey)
   var len = signature.length
   const signatureconcatenated = Buffer.concat([signature, Buffer.from(recovery.toString())])
   return signatureconcatenated
 }
 
 //Verify
-export function verifySignature(signMessage: StdSignandverifyMsg | string, signature: Buffer, publicKey: Buffer): boolean {
+export function verifySignature(
+  signMessage: StdSignandverifyMsg | string,
+  signature: Buffer,
+  publicKey: Buffer
+): boolean {
   var recoverBit = 0
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const hash =  magicHash(signMessageString,'colors')
-  var sig = signature.slice(0,signature.length-1)
-  var chk = signature.slice(signature.length-1,signature.length)
-  if(parseInt(chk.toString()) >= 0){
+  const hash = magicHash(signMessageString, 'colors')
+  var sig = signature.slice(0, signature.length - 1)
+  var chk = signature.slice(signature.length - 1, signature.length)
+  if (parseInt(chk.toString()) >= 0) {
     recoverBit = parseInt(chk.toString())
   }
   var extractedpublicKey = secp256k1.recover(signHash, sig, recoverBit, true)
   const extractedcoloraddress = Buffer.from(getCosmosAddress(extractedpublicKey), 'base64')
-  if (Buffer.compare(publicKey,extractedcoloraddress) != 0){
+  if (Buffer.compare(publicKey, extractedcoloraddress) != 0) {
     return false
   }
-  return secp256k1.verify(signHash, sig,extractedpublicKey)
+  return secp256k1.verify(signHash, sig, extractedpublicKey)
 }
-
 
 function windowRandomBytes(size: number, window: Window) {
   const chunkSize = size / 4
@@ -147,7 +153,7 @@ function windowRandomBytes(size: number, window: Window) {
   return Buffer.from(hexString, 'hex')
 }
 
-function convert (data:any, inBits:any, outBits:any, pad:any) {
+function convert(data: any, inBits: any, outBits: any, pad: any) {
   var value = 0
   var bits = 0
   var maxV = (1 << outBits) - 1
@@ -175,7 +181,7 @@ function convert (data:any, inBits:any, outBits:any, pad:any) {
   return result
 }
 
-function magicHash (message:any, messagePrefix:any) {
+function magicHash(message: any, messagePrefix: any) {
   const varuint = require('varuint-bitcoin')
   messagePrefix = messagePrefix || '\u0018Bitcoin Signed Message:\n'
   if (!Buffer.isBuffer(messagePrefix)) {
@@ -183,9 +189,7 @@ function magicHash (message:any, messagePrefix:any) {
   }
 
   const messageVISize = varuint.encodingLength(message.length)
-  const buffer = Buffer.allocUnsafe(
-    messagePrefix.length + messageVISize + message.length
-  )
+  const buffer = Buffer.allocUnsafe(messagePrefix.length + messageVISize + message.length)
   messagePrefix.copy(buffer, 0)
   varuint.encode(message.length, buffer, messagePrefix.length)
   buffer.write(message, messagePrefix.length + messageVISize)
@@ -193,6 +197,6 @@ function magicHash (message:any, messagePrefix:any) {
   return hash256(buffermessage)
 }
 
-function hash256 (buffer:any) {
+function hash256(buffer: any) {
   return CryptoJS.SHA256(buffer)
 }
