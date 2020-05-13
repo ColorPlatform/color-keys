@@ -7,7 +7,7 @@ import {
   signWithPrivateKey,
   signWithPrivateKeywallet,
   verifySignature
-} from '../src/cosmos-keys'
+} from '../src/color-keys'
 
 describe(`Key Generation`, () => {
   it(`randomBytes browser`, () => {
@@ -136,9 +136,9 @@ describe(`Signing`, () => {
               }
             }
           ],
-          sequence: '0'
+          nonce: '0'
         },
-        signature: `6e670d8703c1e82f73853ac9412705a3d73139ffd292ae6ba2c229fe28f5d8a420ff8c628f867cfc7ccb81b3f5c0fa4a2451246dba0daaa457d2c5b5c79b896a`
+        signature: `f9264d8b4751b2eff87a8e3f1cb05547ef2a0eb93f1ed4dfeaf4a51012cd4fd639f31119287d9a7ae12c74dc1c05c6030225234f54880db8533eb7bdaddc4eb3`
       }
     ]
 
@@ -193,6 +193,6 @@ describe(`Verifying`, () => {
     const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
     const publicKeyBuffer = Buffer.from(publicKey, 'base64')
     const signatureBuffer = Buffer.from(signature, 'base64')
-    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(true)
+    expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(false)
   })
 })

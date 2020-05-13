@@ -1,16 +1,16 @@
-import { testPassword, getStoredWallet, storeWallet, removeWallet } from '../src/cosmos-keystore'
+import { testPassword, getStoredWallet, storeWallet, removeWallet } from '../src/color-keystore'
 
 const mockWallet = {
-  cosmosAddress: `cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mhl`,
+  cosmosAddress: `color1pfkwh8qwfhxq4py70n8djxnjwuzxunzm7k3utt`,
   mnemonic: `abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art`,
   privateKey: `8088c2ed2149c34f6d6533b774da4e1692eb5cb426fdbaef6898eeda489630b7`,
   publicKey: `02ba66a84cf7839af172a13e7fc9f5e7008cb8bca1585f8f3bafb3039eda3c1fdd`
 }
 const mockWallet2 = Object.assign({}, mockWallet, {
-  cosmosAddress: `cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mh2`
+  cosmosAddress: `color1r5v5srda7xfth3hn2s26txvrcrntldjumt8mh2`
 })
 const mockWallet3 = Object.assign({}, mockWallet, {
-  cosmosAddress: `cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mh3`
+  cosmosAddress: `color1r5v5srda7xfth3hn2s26txvrcrntldjumt8mh3`
 })
 
 describe(`Keystore`, () => {
@@ -21,7 +21,7 @@ describe(`Keystore`, () => {
   it(`stores a wallet`, () => {
     storeWallet(mockWallet, 'mock-name', 'mock-password')
     expect(
-      localStorage.getItem(`cosmos-wallets-cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mhl`)
+      localStorage.getItem(`color-wallets-cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mhl`)
     ).toBeDefined()
   })
 
@@ -29,7 +29,7 @@ describe(`Keystore`, () => {
     storeWallet(mockWallet, 'mock-name', 'mock-password')
     storeWallet(mockWallet2, 'mock-name2', 'mock-password')
     storeWallet(mockWallet3, 'mock-name3', 'mock-password')
-    expect(JSON.parse(localStorage.getItem(`cosmos-wallets-index`) || '[]')).toEqual([
+    expect(JSON.parse(localStorage.getItem(`color-wallets-index`) || '[]')).toEqual([
       {
         name: `mock-name`,
         address: mockWallet.cosmosAddress
@@ -49,7 +49,7 @@ describe(`Keystore`, () => {
     storeWallet(mockWallet, 'mock-name', 'mock-password')
     expect(() => storeWallet(mockWallet2, 'mock-name', 'mock-password2')).toThrow()
 
-    expect(JSON.parse(localStorage.getItem(`cosmos-wallets-index`) || '[]')).toEqual([
+    expect(JSON.parse(localStorage.getItem(`color-wallets-index`) || '[]')).toEqual([
       {
         name: `mock-name`,
         address: mockWallet.cosmosAddress
@@ -97,7 +97,7 @@ describe(`Keystore`, () => {
     storeWallet(mockWallet2, 'mock-name2', 'mock-password')
     removeWallet(mockWallet.cosmosAddress, 'mock-password')
     expect(() => getStoredWallet(mockWallet.cosmosAddress, 'mock-password')).toThrow()
-    expect(JSON.parse(localStorage.getItem(`cosmos-wallets-index`) || '[]')).toEqual([
+    expect(JSON.parse(localStorage.getItem(`color-wallets-index`) || '[]')).toEqual([
       {
         name: `mock-name2`,
         address: mockWallet2.cosmosAddress

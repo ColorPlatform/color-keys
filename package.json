@@ -3,17 +3,18 @@
   "version": "2.0.3",
   "description": "js version of color wallet signer and address generation",
   "keywords": [
-    "cosmos",
-    "cosmos.network",
-    "cosmos wallet",
-    "cosmos signer",
-    "cosmos javascript",
-    "cosmos sdk",
-    "cosmos-sdk"
+    "color",
+    "color platform",
+    "color wallet",
+    "color signer",
+    "color javascript",
+    "color sdk",
+    "color-sdk",
+    "colorscan"
   ],
-  "main": "lib/cosmos-keys.js",
-  "typings": "lib/types/cosmos-keys.d.ts",
-  "author": "Saad Rasool <saad@rnssol.com>",
+  "main": "lib/color-keys.js",
+  "typings": "lib/types/color-keys.d.ts",
+  "author": "Based on @cosmos/cosmos-keys. Color Platform project <code@rnssol.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/colorplatform/color-keys.git"

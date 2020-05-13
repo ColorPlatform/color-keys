@@ -10,7 +10,7 @@ const CryptoJS = require('crypto-js')
  * i.e. to show all wallets available.
  */
 
-const KEY_TAG = `cosmos-wallets`
+const KEY_TAG = `color-wallets`
 
 const keySize = 256
 const iterations = 100

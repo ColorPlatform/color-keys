@@ -57,7 +57,7 @@ const Color = Color(STARGATE_URL, ADDRESS)
 
 // create message
 const msg = Color
-  .MsgSend({toAddress: 'color1abcd09876', amounts: [{ denom: 'stake', amount: 10 }})
+  .MsgSend({toAddress: 'color1abcd09876', amounts: [{ denom: 'ncolor', amount: 123456789 }})
 
 // create a signer from this local js signer library
 const localSigner = (signMessage) => {

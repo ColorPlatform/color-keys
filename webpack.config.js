@@ -3,8 +3,8 @@ const config = {
   entry: ['./src/index.ts'],
   output: {
     path: __dirname + '/lib',
-    filename: 'cosmos-keys.js',
-    library: 'cosmos-keys',
+    filename: 'color-keys.js',
+    library: 'color-keys',
     libraryTarget: 'umd',
     umdNamedDefine: true,
     globalObject: 'typeof self !== \'undefined\' ? self : this',
