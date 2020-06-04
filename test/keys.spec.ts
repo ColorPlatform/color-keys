@@ -120,15 +120,15 @@ describe(`Signing`, () => {
         // address: color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval
         privateKey: `ea880bbef6bc3dd378b2b43a2b00ad75fbe721556970e73c4b3d02d65ef9ba33`,
         signMessage: {
-          account_number: '14',
-          chain_id: 'colors-test-01',
+          account_number: '4',
+          chain_id: 'localhost-testnet',
           fee: { amount: [{ amount: '37', denom: 'uclr' }], gas: '36977' },
-          memo: '(Sent via Color Wallet)',
+          memo: 'Test signature',
           msgs: [
             {
               type: 'color/MsgSend',
               value: {
-                amount: [{ amount: '1200000000', denom: 'uclr' }],
+                amount: [{ amount: '2000000', denom: 'uclr' }],
                 from_address: 'color1rgsyxufhnnvyylgwpttfstly3ms64kxlyecval',
                 // This address is for mnemonic: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art
                 // In other words, entropy is bytes([0x00] * 32) -- 32 zero
@@ -136,15 +136,15 @@ describe(`Signing`, () => {
               }
             }
           ],
-          nonce: '0'
+          nonce: '1234567890'
         },
-        signature: `f9264d8b4751b2eff87a8e3f1cb05547ef2a0eb93f1ed4dfeaf4a51012cd4fd639f31119287d9a7ae12c74dc1c05c6030225234f54880db8533eb7bdaddc4eb3`
+        signature: `1707f00b3459a7a53fa8ea7ee8b7e6e930a387b762c3bc7db7f2698e6aef391f3aedc3e3de896458a2409ced5c60d71faa14cc5d087d2db3b42309f62d7f1d4b`
       }
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
       const signature = signWithPrivateKey(signMessage, Buffer.from(privateKey, 'hex'))
-      console.log('Signature:', signature.toString('hex'))
+      // console.log('Signature:', signature.toString('hex'))
       expect(signature.toString('hex')).toEqual(expectedSignature)
     })
   })
