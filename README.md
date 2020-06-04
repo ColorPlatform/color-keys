@@ -1,13 +1,13 @@
 # Color Keys
 
-Color Keys is a library for creating keys and signing messages on Color. You can use it to generate keypairs and addresses and to sign messages for the Color Network. 
+Color Keys is a library for creating keys and signing messages on Color Platform network. You can use it to generate keypairs and addresses and to sign messages for the Color Network. 
 
 This library deals with tasks that are considered *security-critical* and should be used very carefully.
 
 ## Install
 
 ```bash
-yarn add @colorplatform/color-keys
+yarn add @colorplatformjs/color-keys
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ yarn add @colorplatform/color-keys
 ### Create a wallet
 
 ```js
-import { getNewWallet } from "@colorplatform/color-keys"
+import { getNewWallet } from "@colorplatformjs/color-keys"
 
 const { ColorAddress, privateKey, publicKey } = getNewWallet()
 // Attention: protect the `privateKey` at all cost and never display it anywhere!!
@@ -24,7 +24,7 @@ const { ColorAddress, privateKey, publicKey } = getNewWallet()
 ### Import a seed
 
 ```js
-import { generateWalletFromSeed } from "@colorplatform/color-keys"
+import { generateWalletFromSeed } from "@colorplatformjs/color-keys"
 
 const seed = ...24 seed words here
 
@@ -35,25 +35,25 @@ const { ColorAddress, privateKey, publicKey } = generateWalletFromSeed(seed)
 ### Sign a message
 
 ```js
-import { signWithPrivateKey } from "@colorplatform/color-keys"
+import { signWithPrivateKey } from "@colorplatformjs/color-keys"
 
 const privateKey = Buffer.from(...)
-const signMessage = ... message to sign, generate messages with "@lunie/Cosmos-js"
+const signMessage = ... message to sign, generate messages with "@colorplatformjs/color-api"
 const signature = signWithPrivateKey(signMessage, privateKey)
 
 ```
 
-### Using with Color-js
+### Using with Color-API
 
 ```js
-import { signWithPrivateKey } from "@colorplatform/color-keys"
-import Color from "@lunie/Cosmos-js"
+import { signWithPrivateKey } from "@colorplatformjs/color-keys"
+import Color from "@colorplatformjs/color-api"
 
 const privateKey = Buffer.from(...)
 const publicKey = Buffer.from(...)
 
 // init Color sender
-const Color = Color(STARGATE_URL, ADDRESS)
+const Color = Color(REST_SERVER_URL, CHAIN_ID)
 
 // create message
 const msg = Color

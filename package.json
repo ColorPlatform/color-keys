@@ -1,6 +1,6 @@
 {
-  "name": "@colorplatform/color-keys",
-  "version": "2.0.3",
+  "name": "@colorplatformjs/color-keys",
+  "version": "2.0.3-rc",
   "description": "js version of color wallet signer and address generation",
   "keywords": [
     "color",
@@ -14,7 +14,7 @@
   ],
   "main": "lib/color-keys.js",
   "typings": "lib/types/color-keys.d.ts",
-  "author": "Based on @cosmos/cosmos-keys. Color Platform project <code@rnssol.com>",
+  "author": "Based on @cosmos/cosmos-keys. Color Platform project https://color-platform.org",
   "repository": {
     "type": "git",
     "url": "https://github.com/colorplatform/color-keys.git"
