@@ -6,7 +6,11 @@ import * as CryptoJS from 'crypto-js'
 import * as util from 'util'
 import { Wallet, StdSignMsg, StdSignandverifyMsg, KeyPair } from './types'
 import { decode } from 'punycode'
+import { SIGABRT } from 'constants'
 
+// const secp256k1 = require('secp256k1')
+
+console.log("DEBUG: secp256k1", JSON.stringify(secp256k1))
 const hdPathAtom = `m/44'/477'/0'/0/0` // key controlling ATOM allocation
 
 /* tslint:disable-next-line:strict-type-predicates */
@@ -37,8 +41,8 @@ export function getNewWalletFromSeed(mnemonic: string): Wallet {
   const { privateKey, publicKey } = deriveKeypair(masterKey)
   const cosmosAddress = getCosmosAddress(publicKey)
   return {
-    privateKey: privateKey.toString('hex'),
-    publicKey: publicKey.toString('hex'),
+    privateKey: new Buffer(privateKey).toString('hex'),
+    publicKey: new Buffer(publicKey).toString('hex'),
     cosmosAddress
   }
 }
@@ -57,8 +61,8 @@ export function getNewWallet(randomBytesFunc: (size: number) => Buffer = randomB
 }
 
 // NOTE: this only works with a compressed public key (33 bytes)
-export function getCosmosAddress(publicKey: Buffer): string {
-  const message = CryptoJS.enc.Hex.parse(publicKey.toString('hex'))
+export function getCosmosAddress(publicKey: Uint8Array): string {
+  const message = CryptoJS.enc.Hex.parse(new Buffer(publicKey).toString('hex'))
   const address = CryptoJS.RIPEMD160(CryptoJS.SHA256(message) as any).toString()
   const cosmosAddress = bech32ify(address, `color`)
   return cosmosAddress
@@ -75,12 +79,12 @@ function deriveMasterKey(mnemonic: string): bip32.BIP32 {
 
 function deriveKeypair(masterKey: bip32.BIP32): KeyPair {
   const cosmosHD = masterKey.derivePath(hdPathAtom)
-  const privateKey = cosmosHD.privateKey
+  const privateKey = new Uint8Array(cosmosHD.privateKey)
   const publicKey = secp256k1.publicKeyCreate(privateKey, true)
 
   return {
-    privateKey,
-    publicKey
+    privateKey: privateKey,
+    publicKey: publicKey
   }
 }
 
@@ -90,50 +94,71 @@ function bech32ify(address: string, prefix: string) {
   return bech32.encode(prefix, words)
 }
 // produces the signature for a message (returns Buffer)
-export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey: Buffer): Buffer {
+export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey: Uint8Array): Buffer {
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
-  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const { signature } = secp256k1.sign(signHash, privateKey)
 
-  return signature
+  console.log("DEBUG: color-keys: signing: ", signMessage)
+  
+  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
+  // const { signature } = secp256k1.sign(signHash, privateKey)
+  const { signature } = secp256k1.ecdsaSign(new Uint8Array(signHash), privateKey)
+
+  return new Buffer(signature.buffer)
 }
 // produces the signature for a message (returns Buffer)
+// TODO reimpement?
 export function signWithPrivateKeywallet(
   signMessage: StdSignandverifyMsg | string,
-  privateKey: Buffer
+  privateKey: Uint8Array
 ): Buffer {
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
-  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const { signature, recovery } = secp256k1.sign(signHash, privateKey)
-  var len = signature.length
-  const signatureconcatenated = Buffer.concat([signature, Buffer.from(recovery.toString())])
-  return signatureconcatenated
+  const pubKey = secp256k1.publicKeyCreate(privateKey)
+  console.log('DEBUG: public key: ', new Buffer(pubKey).toString('hex'))
+  return signWithPrivateKey(signMessageString, privateKey)
+  // const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
+  // // const { signature, recovery } = secp256k1.sign(signHash, privateKey)
+  // const { signature, recovery } = secp256k1.ecdsaSign(new Uint8Array(signHash), privateKey)
+  // console.log("DEBUG: signWithPrivateKeywallet: signature, recovery", signature, recovery)
+  // var len = signature.length
+  // const signatureconcatenated = Buffer.concat([signature, Buffer.from(recovery.toString())])
+  // return signatureconcatenated
 }
 
+// TODO reimplement
 //Verify
 export function verifySignature(
   signMessage: StdSignandverifyMsg | string,
   signature: Buffer,
-  publicKey: Buffer
+  pubKey: Buffer
 ): boolean {
-  var recoverBit = 0
+
+  // throw "Not implemented"
+
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
-  const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
-  const hash = magicHash(signMessageString, 'colors')
-  var sig = signature.slice(0, signature.length - 1)
-  var chk = signature.slice(signature.length - 1, signature.length)
-  if (parseInt(chk.toString()) >= 0) {
-    recoverBit = parseInt(chk.toString())
-  }
-  var extractedpublicKey = secp256k1.recover(signHash, sig, recoverBit, true)
-  const extractedcoloraddress = Buffer.from(getCosmosAddress(extractedpublicKey), 'base64')
-  if (Buffer.compare(publicKey, extractedcoloraddress) != 0) {
-    return false
-  }
-  return secp256k1.verify(signHash, sig, extractedpublicKey)
+  const signHash = new Uint8Array(Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`))
+  return secp256k1.ecdsaVerify(new Uint8Array(signature), new Uint8Array(signHash), new Uint8Array(pubKey))
+
+  // var recoverBit = 0
+  // const signMessageString: string =
+  //   typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
+  // const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
+  // const hash = magicHash(signMessageString, 'colors')
+  // var sig = signature.slice(0, signature.length - 1)
+  // var chk = signature.slice(signature.length - 1, signature.length)
+  // if (parseInt(chk.toString()) >= 0) {
+  //   recoverBit = parseInt(chk.toString())
+  // }
+  // // var extractedpublicKey = secp256k1.recover(signHash, sig, recoverBit, true)
+  // var extractedpublicKey = secp256k1.ecdsaRecover(signHash, sig, recoverBit, true)
+  // const extractedcoloraddress = Buffer.from(getCosmosAddress(new Buffer(extractedpublicKey.buffer)), 'base64')
+  // if (Buffer.compare(publicKey, extractedcoloraddress) != 0) {
+  //   return false
+  // }
+  // // return secp256k1.verify(signHash, sig, extractedpublicKey)
+  // return secp256k1.ecdsaVerify(signHash, sig, extractedpublicKey)
 }
 
 function windowRandomBytes(size: number, window: Window) {

@@ -143,7 +143,10 @@ describe(`Signing`, () => {
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
-      const signature = signWithPrivateKey(signMessage, Buffer.from(privateKey, 'hex'))
+      const pkeyBuffer : Buffer = Buffer.from(privateKey, 'hex')
+      const pkeyArray : Uint8Array = new Uint8Array(pkeyBuffer) 
+      const signature = signWithPrivateKey(signMessage, pkeyArray)
+
       // console.log('Signature:', signature.toString('hex'))
       expect(signature.toString('hex')).toEqual(expectedSignature)
     })
@@ -158,12 +161,14 @@ describe(`Signing`, () => {
         signMessage: {
           message: 'Sahib'
         },
-        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
       }
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
-      const signature = signWithPrivateKeywallet(signMessage, Buffer.from(privateKey, 'hex'))
+      const pkeyBuffer : Buffer = Buffer.from(privateKey, 'hex')
+      const pkeyArray : Uint8Array = new Uint8Array(pkeyBuffer) 
+      const signature = signWithPrivateKeywallet(signMessage, pkeyArray)
       expect(signature.toString('base64')).toEqual(expectedSignature)
     })
   })
@@ -173,25 +178,26 @@ describe(`Verifying`, () => {
   it(`should verify a signature`, () => {
     const vectors = [
       {
-        publicKey: `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`,
+        address: `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`,
+        publicKey: `03e09a3dd8f80cb67e89fe7b59eb7705ee839f760210418c7320feea84771c5ea0`,
         signMessage: {
           message: 'Sahib'
         },
-        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
+        signature: `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
       }
     ]
 
-    vectors.forEach(({ publicKey, signMessage, signature }) => {
-      const publicKeyBuffer = Buffer.from(publicKey, 'base64')
+    vectors.forEach(({ address, publicKey, signMessage, signature }) => {
+      const publicKeyBuffer = Buffer.from(publicKey, 'hex')
       const signatureBuffer = Buffer.from(signature, 'base64')
-      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(false)
+      expect(verifySignature(signMessage, signatureBuffer, publicKeyBuffer)).toEqual(true)
     })
   })
 
   it(`should fail on invalid signature`, () => {
-    const publicKey = `color1d5993rjea7tlyxzrtqqveeuk3m34ef0axd2exr`
-    const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fjA=`
-    const publicKeyBuffer = Buffer.from(publicKey, 'base64')
+    const publicKey = `03e09a3dd8f80cb67e89fe7b59eb7705ee839f760210418c7320feea84771c5ea0`
+    const signature = `Y6SqAjeQw+JJD7RFq3VaSLeFPFc6Y/jfriJNTTraGy0oYxUqE+ZzsEPCdgoOyIuTKGS3Yg1UsCNkmJt9TtH+fg==`
+    const publicKeyBuffer = Buffer.from(publicKey, 'hex')
     const signatureBuffer = Buffer.from(signature, 'base64')
     expect(verifySignature('abcdefg', signatureBuffer, publicKeyBuffer)).toEqual(false)
   })

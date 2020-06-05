@@ -1,6 +1,6 @@
 export interface KeyPair {
-  privateKey: Buffer
-  publicKey: Buffer
+  privateKey: Uint8Array
+  publicKey: Uint8Array
 }
 export interface Wallet {
   privateKey: string
