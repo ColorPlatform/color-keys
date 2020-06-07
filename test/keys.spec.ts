@@ -143,8 +143,8 @@ describe(`Signing`, () => {
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
-      const pkeyBuffer : Buffer = Buffer.from(privateKey, 'hex')
-      const pkeyArray : Uint8Array = new Uint8Array(pkeyBuffer) 
+      const pkeyBuffer: Buffer = Buffer.from(privateKey, 'hex')
+      const pkeyArray: Uint8Array = new Uint8Array(pkeyBuffer)
       const signature = signWithPrivateKey(signMessage, pkeyArray)
 
       // console.log('Signature:', signature.toString('hex'))
@@ -166,8 +166,8 @@ describe(`Signing`, () => {
     ]
 
     vectors.forEach(({ privateKey, signMessage, signature: expectedSignature }) => {
-      const pkeyBuffer : Buffer = Buffer.from(privateKey, 'hex')
-      const pkeyArray : Uint8Array = new Uint8Array(pkeyBuffer) 
+      const pkeyBuffer: Buffer = Buffer.from(privateKey, 'hex')
+      const pkeyArray: Uint8Array = new Uint8Array(pkeyBuffer)
       const signature = signWithPrivateKeywallet(signMessage, pkeyArray)
       expect(signature.toString('base64')).toEqual(expectedSignature)
     })

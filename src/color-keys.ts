@@ -10,7 +10,7 @@ import { SIGABRT } from 'constants'
 
 // const secp256k1 = require('secp256k1')
 
-console.log("DEBUG: secp256k1", JSON.stringify(secp256k1))
+console.log('DEBUG: secp256k1', JSON.stringify(secp256k1))
 const hdPathAtom = `m/44'/477'/0'/0/0` // key controlling ATOM allocation
 
 /* tslint:disable-next-line:strict-type-predicates */
@@ -94,12 +94,15 @@ function bech32ify(address: string, prefix: string) {
   return bech32.encode(prefix, words)
 }
 // produces the signature for a message (returns Buffer)
-export function signWithPrivateKey(signMessage: StdSignMsg | string, privateKey: Uint8Array): Buffer {
+export function signWithPrivateKey(
+  signMessage: StdSignMsg | string,
+  privateKey: Uint8Array
+): Buffer {
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage)
 
-  console.log("DEBUG: color-keys: signing: ", signMessage)
-  
+  console.log('DEBUG: color-keys: signing: ', signMessage)
+
   const signHash = Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`)
   // const { signature } = secp256k1.sign(signHash, privateKey)
   const { signature } = secp256k1.ecdsaSign(new Uint8Array(signHash), privateKey)
@@ -133,13 +136,16 @@ export function verifySignature(
   signature: Buffer,
   pubKey: Buffer
 ): boolean {
-
   // throw "Not implemented"
 
   const signMessageString: string =
     typeof signMessage === 'string' ? signMessage : JSON.stringify(signMessage.message)
   const signHash = new Uint8Array(Buffer.from(CryptoJS.SHA256(signMessageString).toString(), `hex`))
-  return secp256k1.ecdsaVerify(new Uint8Array(signature), new Uint8Array(signHash), new Uint8Array(pubKey))
+  return secp256k1.ecdsaVerify(
+    new Uint8Array(signature),
+    new Uint8Array(signHash),
+    new Uint8Array(pubKey)
+  )
 
   // var recoverBit = 0
   // const signMessageString: string =
