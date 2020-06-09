@@ -1,6 +1,6 @@
 {
   "name": "@colorplatformjs/color-keys",
-  "version": "2.0.3-rc",
+  "version": "2.1.1-rc",
   "description": "js version of color wallet signer and address generation",
   "keywords": [
     "color",
@@ -95,7 +95,7 @@
     "@types/crypto-js": "^3.1.43",
     "@types/jest": "^23.3.2",
     "@types/node": "^10.11.0",
-    "@types/secp256k1": "^3.5.0",
+    "@types/secp256k1": "^3.5.3",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "husky": "^1.0.1",
